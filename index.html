@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rinbex - Cartoon Network Разписание</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#7b2ff7">
+    <link rel="icon" href="icon-192.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Rinbex">
     <style>
         * {
             margin: 0;
@@ -13,13 +20,13 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%);
+            background: linear-gradient(135deg, #0a0510 0%, #1a0f2e 50%, #0a0510 100%);
             color: #fff;
             min-height: 100vh;
         }
 
         .header {
-            background: linear-gradient(90deg, #00d4ff, #7b2ff7, #ff2d95);
+            background: linear-gradient(90deg, #b96bff, #7b2ff7, #9d4edd);
             padding: 4px;
         }
 
@@ -67,7 +74,7 @@
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 3px;
-            background: linear-gradient(90deg, #00d4ff, #7b2ff7, #ff2d95);
+            background: linear-gradient(90deg, #b96bff, #7b2ff7, #9d4edd);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -105,7 +112,7 @@
         }
 
         .day-tab.active {
-            background: linear-gradient(135deg, #7b2ff7, #ff2d95);
+            background: linear-gradient(135deg, #7b2ff7, #9d4edd);
             border-color: transparent;
             color: #fff;
         }
@@ -150,7 +157,7 @@
         .show-time .time {
             font-size: 20px;
             font-weight: 800;
-            color: #00d4ff;
+            color: #b96bff;
         }
 
         .show-time .duration {
@@ -162,7 +169,7 @@
         .show-divider {
             width: 3px;
             height: 40px;
-            background: linear-gradient(to bottom, #7b2ff7, #ff2d95);
+            background: linear-gradient(to bottom, #7b2ff7, #9d4edd);
             border-radius: 3px;
         }
 
@@ -195,19 +202,19 @@
             text-transform: uppercase;
         }
 
-        .badge-new { background: #ff2d95; color: #fff; }
+        .badge-new { background: #9d4edd; color: #fff; }
         .badge-popular { background: #7b2ff7; color: #fff; }
-        .badge-classic { background: #00d4ff; color: #000; }
-        .badge-movie { background: #ffaa00; color: #000; }
+        .badge-classic { background: #b96bff; color: #000; }
+        .badge-movie { background: #c77dff; color: #000; }
 
         .now-playing {
-            border-color: #00d4ff;
+            border-color: #b96bff;
             box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
             background: linear-gradient(145deg, #1a2535, #162030);
         }
 
         .now-label {
-            background: #00d4ff;
+            background: #b96bff;
             color: #000;
             padding: 3px 10px;
             border-radius: 10px;
@@ -240,7 +247,7 @@
         .stat-num {
             font-size: 24px;
             font-weight: 800;
-            background: linear-gradient(90deg, #00d4ff, #7b2ff7);
+            background: linear-gradient(90deg, #b96bff, #7b2ff7);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -510,8 +517,8 @@ function renderSearchResults(term) {
         const timesHtml = info.airings.map(a => {
             const isNow = a.dayIndex === todayIndex && isNowPlaying(a.time, a.duration);
             const style = isNow
-                ? 'background:#00d4ff;color:#000;'
-                : 'background:#252540;color:#00d4ff;';
+                ? 'background:#b96bff;color:#000;'
+                : 'background:#252540;color:#b96bff;';
             const nowTxt = isNow ? ' • СЕГА' : '';
             return `<span style="display:inline-block;${style}padding:6px 12px;border-radius:10px;margin:4px 4px 0 0;font-size:13px;font-weight:600;">${a.day} ${a.time}${nowTxt}</span>`;
         }).join('');
@@ -543,6 +550,13 @@ function filterShows() {
 
 // Init
 showDay(getCurrentDayIndex());
+
+// Регистрация на Service Worker (за да работи като инсталируемо приложение)
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('sw.js').catch(function(e) {});
+    });
+}
 </script>
 
 </body>
