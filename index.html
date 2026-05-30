@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CN Program - Cartoon Network Разписание</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(90deg, #00d4ff, #7b2ff7, #ff2d95);
+            padding: 4px;
+        }
+
+        .header-inner {
+            background: #111;
+            padding: 20px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .cn-logo {
+            width: 60px;
+            height: 60px;
+            background: #fff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 18px;
+            color: #000;
+            line-height: 1;
+        }
+
+        .cn-logo span:first-child {
+            background: #000;
+            color: #fff;
+            padding: 4px 3px;
+        }
+
+        .cn-logo span:last-child {
+            padding: 4px 3px;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            background: linear-gradient(90deg, #00d4ff, #7b2ff7, #ff2d95);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #888;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .day-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            padding: 20px 15px 10px;
+            flex-wrap: wrap;
+        }
+
+        .day-tab {
+            padding: 10px 20px;
+            border: 2px solid #333;
+            border-radius: 25px;
+            background: transparent;
+            color: #aaa;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .day-tab:hover {
+            border-color: #7b2ff7;
+            color: #fff;
+        }
+
+        .day-tab.active {
+            background: linear-gradient(135deg, #7b2ff7, #ff2d95);
+            border-color: transparent;
+            color: #fff;
+        }
+
+        .schedule-container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 20px 40px;
+        }
+
+        .day-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            padding-left: 15px;
+            border-left: 4px solid #7b2ff7;
+        }
+
+        .show-card {
+            background: linear-gradient(145deg, #1e1e30, #16162a);
+            border: 1px solid #2a2a45;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.3s;
+        }
+
+        .show-card:hover {
+            border-color: #7b2ff7;
+            transform: translateX(5px);
+            box-shadow: 0 4px 20px rgba(123, 47, 247, 0.15);
+        }
+
+        .show-time {
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .show-time .time {
+            font-size: 20px;
+            font-weight: 800;
+            color: #00d4ff;
+        }
+
+        .show-time .duration {
+            font-size: 11px;
+            color: #666;
+            margin-top: 2px;
+        }
+
+        .show-divider {
+            width: 3px;
+            height: 40px;
+            background: linear-gradient(to bottom, #7b2ff7, #ff2d95);
+            border-radius: 3px;
+        }
+
+        .show-info {
+            flex: 1;
+        }
+
+        .show-name {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+
+        .show-name-en {
+            font-size: 12px;
+            color: #777;
+        }
+
+        .show-episode {
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        .show-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .badge-new { background: #ff2d95; color: #fff; }
+        .badge-popular { background: #7b2ff7; color: #fff; }
+        .badge-classic { background: #00d4ff; color: #000; }
+        .badge-movie { background: #ffaa00; color: #000; }
+
+        .now-playing {
+            border-color: #00d4ff;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
+            background: linear-gradient(145deg, #1a2535, #162030);
+        }
+
+        .now-label {
+            background: #00d4ff;
+            color: #000;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            padding: 15px;
+            margin: 0 auto 10px;
+            max-width: 700px;
+            background: #151525;
+            border-radius: 12px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-num {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(90deg, #00d4ff, #7b2ff7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        .search-box {
+            max-width: 400px;
+            margin: 15px auto;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border-radius: 25px;
+            border: 2px solid #2a2a45;
+            background: #151525;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .search-box input:focus {
+            border-color: #7b2ff7;
+        }
+
+        .search-box::before {
+            content: "\uD83D\uDD0D";
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #444;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="header-inner">
+        <div class="cn-logo"><span>C</span><span>N</span></div>
+        <div>
+            <h1>CN Program</h1>
+            <div class="subtitle">Cartoon Network - Седмична телевизионна програма</div>
+        </div>
+    </div>
+</div>
+
+<div class="schedule-container">
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Търси анимация (напр. Кларънс)..." oninput="filterShows()">
+    </div>
+
+    <div class="stats-bar">
+        <div class="stat">
+            <div class="stat-num" id="totalShows">0</div>
+            <div class="stat-label">Предавания</div>
+        </div>
+        <div class="stat">
+            <div class="stat-num" id="totalHours">0</div>
+            <div class="stat-label">Часа дневно</div>
+        </div>
+        <div class="stat">
+            <div class="stat-num">7</div>
+            <div class="stat-label">Дни</div>
+        </div>
+    </div>
+
+    <div class="day-tabs" id="dayTabs"></div>
+
+    <div id="scheduleContent"></div>
+</div>
+
+<div class="footer">
+    CN Program &copy; 2026 | Cartoon Network Разписание | Всички права запазени
+</div>
+
+<script>
+const days = ["Понеделник", "Вторник", "Сряда", "Четвъртък", "Петък", "Събота", "Неделя"];
+
+const shows = [
+    { name: "Бен 10", nameEn: "Ben 10", duration: 30, badge: "popular", episodes: "Сезон 5" },
+    { name: "Време за приключения", nameEn: "Adventure Time", duration: 25, badge: "classic", episodes: "Сезон 10" },
+    { name: "Удивителният свят на Гъмбол", nameEn: "The Amazing World of Gumball", duration: 25, badge: "popular", episodes: "Сезон 6" },
+    { name: "Крейг от потока", nameEn: "Craig of the Creek", duration: 25, badge: "new", episodes: "Сезон 4" },
+    { name: "Титаните - напред!", nameEn: "Teen Titans Go!", duration: 25, badge: "popular", episodes: "Сезон 8" },
+    { name: "Ние голите мечоци", nameEn: "We Bare Bears", duration: 25, badge: "popular", episodes: "Сезон 4" },
+    { name: "Стивън Юнивърс", nameEn: "Steven Universe", duration: 25, badge: "classic", episodes: "Сезон 5" },
+    { name: "Силата на момичетата", nameEn: "The Powerpuff Girls", duration: 25, badge: "classic", episodes: "Сезон 3" },
+    { name: "Редовно шоу", nameEn: "Regular Show", duration: 25, badge: "classic", episodes: "Сезон 8" },
+    { name: "Нинджаго", nameEn: "Ninjago", duration: 30, badge: "popular", episodes: "Сезон 16" },
+    { name: "Бакуган", nameEn: "Bakugan", duration: 25, badge: "new", episodes: "Сезон 4" },
+    { name: "Дракони: Спасителите", nameEn: "Dragons: Rescue Riders", duration: 25, badge: null, episodes: "Сезон 2" },
+    { name: "Том и Джери", nameEn: "Tom and Jerry", duration: 30, badge: "classic", episodes: "Класически" },
+    { name: "Скуби-Ду", nameEn: "Scooby-Doo", duration: 30, badge: "classic", episodes: "Мистерии ООД" },
+    { name: "Джони Браво", nameEn: "Johnny Bravo", duration: 25, badge: "classic", episodes: "Класически" },
+    { name: "Лабораторията на Декстър", nameEn: "Dexter's Laboratory", duration: 25, badge: "classic", episodes: "Класически" },
+    { name: "Кураж - страхливото куче", nameEn: "Courage the Cowardly Dog", duration: 25, badge: "classic", episodes: "Класически" },
+    { name: "Виктор и Валентино", nameEn: "Victor and Valentino", duration: 25, badge: null, episodes: "Сезон 3" },
+    { name: "Елиът от Земята", nameEn: "Elliott from Earth", duration: 25, badge: "new", episodes: "Сезон 1" },
+    { name: "Джелата и Какаото", nameEn: "Jellystone!", duration: 25, badge: "new", episodes: "Сезон 2" },
+    { name: "Тотална драма", nameEn: "Total Drama", duration: 30, badge: "popular", episodes: "Нов сезон" },
+    { name: "Самурай Джак", nameEn: "Samurai Jack", duration: 30, badge: "classic", episodes: "Класически" },
+    { name: "Кларънс", nameEn: "Clarence", duration: 25, badge: "popular", episodes: "Сезон 3" },
+];
+
+// Generate schedule for each day
+const weekSchedule = {};
+
+function generateDaySchedule(dayIndex) {
+    const schedule = [];
+    let hour = 6;
+    let minute = 0;
+
+    // Shuffle shows differently for each day using a seed
+    const dayShows = [...shows];
+    for (let i = dayShows.length - 1; i > 0; i--) {
+        const j = (i * (dayIndex + 3) * 7 + dayIndex * 5) % (i + 1);
+        [dayShows[i], dayShows[j]] = [dayShows[j], dayShows[i]];
+    }
+
+    let showIdx = 0;
+    while (hour < 22) {
+        const show = dayShows[showIdx % dayShows.length];
+        const h = hour.toString().padStart(2, '0');
+        const m = minute.toString().padStart(2, '0');
+
+        schedule.push({
+            time: `${h}:${m}`,
+            ...show
+        });
+
+        minute += show.duration;
+        if (minute >= 60) {
+            hour += Math.floor(minute / 60);
+            minute = minute % 60;
+        }
+        showIdx++;
+    }
+
+    return schedule;
+}
+
+days.forEach((day, i) => {
+    weekSchedule[i] = generateDaySchedule(i);
+});
+
+// Determine current time info
+function isNowPlaying(time, duration) {
+    const now = new Date();
+    const [h, m] = time.split(':').map(Number);
+    const startMin = h * 60 + m;
+    const endMin = startMin + duration;
+    const nowMin = now.getHours() * 60 + now.getMinutes();
+    return nowMin >= startMin && nowMin < endMin;
+}
+
+function getCurrentDayIndex() {
+    const d = new Date().getDay();
+    return d === 0 ? 6 : d - 1; // Monday=0
+}
+
+// Render
+function renderTabs(activeDay) {
+    const tabs = document.getElementById('dayTabs');
+    tabs.innerHTML = days.map((day, i) =>
+        `<button class="day-tab ${i === activeDay ? 'active' : ''}" onclick="showDay(${i})">${day}</button>`
+    ).join('');
+}
+
+function showDay(dayIndex) {
+    renderTabs(dayIndex);
+    const container = document.getElementById('scheduleContent');
+    const schedule = weekSchedule[dayIndex];
+    const todayIndex = getCurrentDayIndex();
+
+    let html = `<h2 class="day-title">${days[dayIndex]}</h2>`;
+
+    schedule.forEach(show => {
+        const isNow = dayIndex === todayIndex && isNowPlaying(show.time, show.duration);
+        const nowClass = isNow ? 'now-playing' : '';
+        const badgeHtml = show.badge
+            ? `<span class="show-badge badge-${show.badge}">${
+                show.badge === 'new' ? 'Ново' :
+                show.badge === 'popular' ? 'Популярно' :
+                show.badge === 'classic' ? 'Класика' : 'Филм'
+              }</span>`
+            : '';
+        const nowHtml = isNow ? '<span class="now-label">Сега</span>' : '';
+        const durationH = show.duration >= 60
+            ? `${Math.floor(show.duration/60)}ч ${show.duration%60}мин`
+            : `${show.duration} мин`;
+
+        html += `
+        <div class="show-card ${nowClass}">
+            <div class="show-time">
+                <div class="time">${show.time}</div>
+                <div class="duration">${durationH}</div>
+            </div>
+            <div class="show-divider"></div>
+            <div class="show-info">
+                <div class="show-name">${show.name} ${nowHtml}</div>
+                <div class="show-name-en">${show.nameEn}</div>
+                <div class="show-episode">${show.episodes}</div>
+            </div>
+            ${badgeHtml}
+        </div>`;
+    });
+
+    container.innerHTML = html;
+
+    // Update stats
+    document.getElementById('totalShows').textContent = schedule.length;
+    const totalMins = schedule.reduce((sum, s) => sum + s.duration, 0);
+    document.getElementById('totalHours').textContent = Math.round(totalMins / 60);
+}
+
+// Търсене из цялата седмица: показва в кои дни и в колко часа върви анимацията
+function renderSearchResults(term) {
+    const container = document.getElementById('scheduleContent');
+    const tabs = document.getElementById('dayTabs');
+    tabs.innerHTML = '';
+    const todayIndex = getCurrentDayIndex();
+
+    // Събираме всички излъчвания, които съвпадат с търсенето
+    const matches = [];
+    days.forEach((day, dayIndex) => {
+        weekSchedule[dayIndex].forEach(show => {
+            if (show.name.toLowerCase().includes(term) || show.nameEn.toLowerCase().includes(term)) {
+                matches.push({ ...show, dayIndex });
+            }
+        });
+    });
+
+    if (matches.length === 0) {
+        container.innerHTML = '<p style="text-align:center;color:#666;padding:40px;">Няма намерена анимация с това име 🙁</p>';
+        return;
+    }
+
+    // Групираме по име на анимация
+    const byShow = {};
+    matches.forEach(m => {
+        if (!byShow[m.name]) byShow[m.name] = { nameEn: m.nameEn, badge: m.badge, episodes: m.episodes, airings: [] };
+        byShow[m.name].airings.push({ day: days[m.dayIndex], dayIndex: m.dayIndex, time: m.time, duration: m.duration });
+    });
+
+    let html = `<h2 class="day-title">Резултати от търсенето</h2>`;
+
+    Object.keys(byShow).forEach(name => {
+        const info = byShow[name];
+        // Сортираме по ден, после по час
+        info.airings.sort((a, b) => a.dayIndex - b.dayIndex || a.time.localeCompare(b.time));
+
+        const timesHtml = info.airings.map(a => {
+            const isNow = a.dayIndex === todayIndex && isNowPlaying(a.time, a.duration);
+            const style = isNow
+                ? 'background:#00d4ff;color:#000;'
+                : 'background:#252540;color:#00d4ff;';
+            const nowTxt = isNow ? ' • СЕГА' : '';
+            return `<span style="display:inline-block;${style}padding:6px 12px;border-radius:10px;margin:4px 4px 0 0;font-size:13px;font-weight:600;">${a.day} ${a.time}${nowTxt}</span>`;
+        }).join('');
+
+        html += `
+        <div class="show-card" style="flex-direction:column;align-items:flex-start;">
+            <div style="display:flex;align-items:center;gap:10px;width:100%;">
+                <div class="show-info">
+                    <div class="show-name">${name}</div>
+                    <div class="show-name-en">${info.nameEn} • ${info.episodes}</div>
+                </div>
+                <span style="margin-left:auto;color:#888;font-size:13px;">${info.airings.length} излъчвания/седмица</span>
+            </div>
+            <div style="margin-top:10px;">${timesHtml}</div>
+        </div>`;
+    });
+
+    container.innerHTML = html;
+}
+
+function filterShows() {
+    const term = document.getElementById('searchInput').value.trim().toLowerCase();
+    if (term) {
+        renderSearchResults(term);
+    } else {
+        showDay(getCurrentDayIndex());
+    }
+}
+
+// Init
+showDay(getCurrentDayIndex());
+</script>
+
+</body>
+</html>
